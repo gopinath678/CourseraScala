@@ -16,6 +16,8 @@ class TweetSetSuite extends FunSuite {
     val set4c = set3.incl(c)
     val set4d = set3.incl(d)
     val set5 = set4c.incl(d)
+    val e = new Tweet("e", "e body", 30)
+    val set6 = set5 incl e
   }
 
   def asSet(tweets: TweetSet): Set[Tweet] = {
@@ -25,24 +27,6 @@ class TweetSetSuite extends FunSuite {
   }
 
   def size(set: TweetSet): Int = asSet(set).size
-
-  test("filter: on empty set") {
-    new TestSets {
-      assert(size(set1.filter(tw => tw.user == "a")) === 0)
-    }
-  }
-
-  test("filter: a on set5") {
-    new TestSets {
-      assert(size(set5.filter(tw => tw.user == "a")) === 1)
-    }
-  }
-
-  test("filter: 20 on set5") {
-    new TestSets {
-      assert(size(set5.filter(tw => tw.retweets == 20)) === 2)
-    }
-  }
 
   test("union: set4c and set4d") {
     new TestSets {
@@ -62,11 +46,47 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
+  test("filter: on empty set") {
+    new TestSets {
+      assert(size(set1.filter(tw => tw.user == "a")) === 0)
+    }
+  }
+
+  test("filter: on one element set2") {
+    new TestSets {
+      assert(size(set2.filter(tw => tw.user == "a")) === 1)
+      assert(size(set2.filter(tw => tw.user == "b")) === 0)
+    }
+  }
+
+  test("filter: a on set5") {
+    new TestSets {
+      assert(size(set5.filter(tw => tw.user == "a")) === 1)
+    }
+  }
+
+  test("filter: 20 on set5") {
+    new TestSets {
+      assert(size(set5.filter(tw => tw.retweets == 20)) === 2)
+    }
+  }
+
+  test("mostRetweeted") {
+    new TestSets {
+      assert(set6.mostRetweeted.retweets === 30)
+      assert(set6.remove(set6.mostRetweeted).mostRetweeted.retweets === 20)
+    }
+  }
+
   test("descending: set5") {
     new TestSets {
       val trends = set5.descendingByRetweet
       assert(!trends.isEmpty)
       assert(trends.head.user == "a" || trends.head.user == "b")
     }
+  }
+
+  test("GoogleVSApple") {
+    objsets.GoogleVsApple.trending
   }
 }
